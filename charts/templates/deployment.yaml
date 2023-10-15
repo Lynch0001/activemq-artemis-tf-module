@@ -92,3 +92,7 @@ spec:
           secret:
             secretName: artemis-certs
 
+#      volumes:
+#        - name: broker
+#          persistentVolumeClaim:
+#            claimName: artemis-data
