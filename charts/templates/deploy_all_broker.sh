@@ -14,6 +14,7 @@ kubectl apply -f configmap-management.yaml
 kubectl apply -f configmap-profile.yaml
 kubectl apply -f configmap-roles.yaml
 kubectl apply -f configmap-users.yaml
-kubectl apply -f deployment-base.yaml
+kubectl apply -f pvc.yaml
+kubectl apply -f deployment.yaml
 kubectl apply -f service-internal.yaml
 kubectl apply -f service-external.yaml

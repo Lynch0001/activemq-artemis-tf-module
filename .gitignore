@@ -8,6 +8,7 @@
 # intellij specific files/directories #
 ######################################
 /.idea/
+**/.idea
 *.ipr
 *.iws
 *.iml

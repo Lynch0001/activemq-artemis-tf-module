@@ -13,7 +13,8 @@ kubectl delete -f configmap-management.yaml
 kubectl delete -f configmap-profile.yaml
 kubectl delete -f configmap-roles.yaml
 kubectl delete -f configmap-users.yaml
-kubectl delete -f deployment-base.yaml
+kubectl delete -f deployment.yaml
+kubectl delete -f pvc.yaml
 kubectl delete -f service-internal.yaml
 kubectl delete -f service-external.yaml
 kubectl delete -f namespace.yaml

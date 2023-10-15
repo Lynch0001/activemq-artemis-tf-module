@@ -68,8 +68,17 @@ spec:
                   key: ACTIVEMQ_CONFIG_DEFAULTACCOUNT
           volumeMounts:
             - name: broker
-              mountPath: /etc/activemq-artemis
+              mountPath: /etc/activemq-artemis/etc
       volumes:
         - name: broker
           emptyDir:
             sizeLimit: 50Mi
+
+
+#        - name: data
+#          persistentVolumeClaim:
+#            claimName: artemis-data
+#
+#
+#              - name: data
+#                mountPath: /etc/activemq-artemis/data

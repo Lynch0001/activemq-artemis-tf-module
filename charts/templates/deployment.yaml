@@ -43,9 +43,6 @@ spec:
           volumeMounts:
             - name: broker
               mountPath: /etc/activemq-artemis
-            - name: broker-config
-              mountPath: /etc/activemq-artemis/etc/broker.xml
-              subPath: broker.xml
       containers:
         - name: artemis
           image: apache/activemq-artemis:2.30.0
@@ -72,27 +69,52 @@ spec:
           volumeMounts:
             - name: broker
               mountPath: /etc/activemq-artemis
-            - name: broker-config
-              mountPath: /etc/activemq-artemis/etc/broker.xml
-              subPath: broker.xml
-            - name: certs
+            - name: certs-keystore
               readOnly: true
-              mountPath: /etc/activemq-artemis/certs
+              mountPath: /etc/certs/keystore.jks
+              subPath: keystore.jks
+            - name: certs-truststore
+              readOnly: true
+              mountPath: /etc/certs/truststore.jks
+              subPath: truststore.jks
       volumes:
         - name: broker
           emptyDir:
             sizeLimit: 50Mi
-        - name: broker-config
-          configMap:
-            name: broker-config
-            items:
-              - key: broker.xml
-                path: broker.xml
-        - name: certs
+        - name: certs-keystore
           secret:
             secretName: artemis-certs
+            items:
+              - key: keystore.jks
+                path: keystore.jks
+        - name: certs-truststore
+          secret:
+            secretName: artemis-certs
+            items:
+              - key: truststore.jks
+                path: truststore.jks
+
+
+#        - name: broker-config
+#          mountPath: /etc/activemq-artemis/etc/broker.xml
+#          subPath: broker.xml
+#
+#        - name: broker-config
+#          configMap:
+#            name: broker-config
+#            items:
+#              - key: broker.xml
+#                path: broker.xml
 
 #      volumes:
 #        - name: broker
 #          persistentVolumeClaim:
 #            claimName: artemis-data
+
+#        - name: data
+#          persistentVolumeClaim:
+#            claimName: artemis-data
+#
+#
+#              - name: data
+  #                mountPath: /etc/activemq-artemis/data
