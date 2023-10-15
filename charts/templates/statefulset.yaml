@@ -1,0 +1,167 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: artemis
+  namespace: activemq-artemis-broker
+  labels:
+    app: artemis
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: artemis
+  template:
+    metadata:
+      labels:
+        app: artemis
+    spec:
+      securityContext:
+        runAsUser: 1001
+      initContainers:
+        - name: artemis-init
+          image: apache/activemq-artemis:2.30.0
+          workingDir: /
+          command: [ '/opt/activemq-artemis/bin/artemis', 'create', '--user', 'artemis', '--password', 'password', '--allow-anonymous', 'true', '/etc/activemq-artemis']
+          ports:
+            - containerPort: 61616
+              name: tcp
+            - containerPort: 8161
+              name: admin
+          env:
+            - name: ANONYMOUS_LOGIN
+              value: "true"
+            - name: ACTIVEMQ_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: artemis-config
+                  key: ACTIVEMQ_CONFIG_NAME
+            - name: ACTIVEMQ_CONFIG_DEFAULTACCOUNT
+              valueFrom:
+                configMapKeyRef:
+                  name: artemis-config
+                  key: ACTIVEMQ_CONFIG_DEFAULTACCOUNT
+          volumeMounts:
+            - name: broker
+              mountPath: /etc/activemq-artemis
+      containers:
+        - name: artemis
+          image: apache/activemq-artemis:2.30.0
+          workingDir: /
+          command: [ '/etc/activemq-artemis/bin/artemis', 'run']
+          ports:
+            - containerPort: 61616
+              name: tcp
+            - containerPort: 8161
+              name: admin
+          env:
+            - name: ANONYMOUS_LOGIN
+              value: "true"
+            - name: ACTIVEMQ_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: artemis-config
+                  key: ACTIVEMQ_CONFIG_NAME
+            - name: ACTIVEMQ_CONFIG_DEFAULTACCOUNT
+              valueFrom:
+                configMapKeyRef:
+                  name: artemis-config
+                  key: ACTIVEMQ_CONFIG_DEFAULTACCOUNT
+          volumeMounts:
+            - name: broker
+              mountPath: /etc/activemq-artemis
+            - name: broker-config
+              mountPath: /etc/activemq-artemis/etc/broker.xml
+              subPath: broker.xml
+            - name: broker-bootstrap
+              mountPath: /etc/activemq-artemis/etc/bootstrap.xml
+              subPath: bootstrap.xml
+            - name: broker-management
+              mountPath: /etc/activemq-artemis/etc/management.xml
+              subPath: management.xml
+            - name: broker-logging
+              mountPath: /etc/activemq-artemis/etc/log4j2.properties
+              subPath: log4j2.properties
+            - name: broker-login
+              mountPath: /etc/activemq-artemis/etc/login.config
+              subPath: login.config
+            - name: broker-users
+              mountPath: /etc/activemq-artemis/etc/artemis-users.properties
+              subPath: artemis-users.properties
+            - name: broker-roles
+              mountPath: /etc/activemq-artemis/etc/artemis-roles.properties
+              subPath: artemis-roles.properties
+            - name: broker-profile
+              mountPath: /etc/activemq-artemis/etc/artemis.profile
+              subPath: artemis.profile
+            - name: broker-jolokia
+              mountPath: /etc/activemq-artemis/etc/jolokia-access.xml
+              subPath: jolokia-access.xml
+      volumes:
+        - name: broker-config
+          configMap:
+            name: broker-config
+            items:
+              - key: broker.xml
+                path: broker.xml
+        - name: broker-bootstrap
+          configMap:
+            name: broker-bootstrap
+            items:
+              - key: bootstrap.xml
+                path: bootstrap.xml
+        - name: broker-profile
+          configMap:
+            name: broker-profile
+            items:
+              - key: artemis.profile
+                path: artemis.profile
+        - name: broker-roles
+          configMap:
+            name: broker-roles
+            items:
+              - key: artemis-roles.properties
+                path: artemis-roles.properties
+        - name: broker-users
+          configMap:
+            name: broker-users
+            items:
+              - key: artemis-users.properties
+                path: artemis-users.properties
+        - name: broker-jolokia
+          configMap:
+            name: broker-jolokia
+            items:
+              - key: jolokia-access.xml
+                path: jolokia-access.xml
+        - name: broker-logging
+          configMap:
+            name: broker-logging
+            items:
+              - key: log4j2.properties
+                path: log4j2.properties
+        - name: broker-login
+          configMap:
+            name: broker-login
+            items:
+              - key: login.config
+                path: login.config
+        - name: broker-management
+          configMap:
+            name: broker-management
+            items:
+              - key: management.xml
+                path: management.xml
+        - name: broker
+          emptyDir:
+            sizeLimit: 50Mi
+  serviceName: artemis-service
+
+
+#  CREATE_ARGUMENTS=--user artemis --password artemis --silent --require-login --http-host 0.0.0.0 --relax-jolokia
+#Creating ActiveMQ Artemis instance at: /var/lib/artemis-instance
+#  Auto tuning journal ...
+#  done! Your system can make 31.25 writes per millisecond, your journal-buffer-timeout will be 32000
+#You can now start the broker by executing:
+#    "/var/lib/artemis-instance/bin/artemis" run
+#Or you can run the broker in the background using:
+#    "/var/lib/artemis-instance/bin/artemis-service" start

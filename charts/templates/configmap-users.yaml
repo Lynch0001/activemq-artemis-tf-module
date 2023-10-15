@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: broker-users
+  namespace: activemq-artemis-broker
+data:
+  artemis-users.properties: |
+    ## ---------------------------------------------------------------------------
+    ## Licensed to the Apache Software Foundation (ASF) under one or more
+    ## contributor license agreements.  See the NOTICE file distributed with
+    ## this work for additional information regarding copyright ownership.
+    ## The ASF licenses this file to You under the Apache License, Version 2.0
+    ## (the "License"); you may not use this file except in compliance with
+    ## the License.  You may obtain a copy of the License at
+    ##
+    ## http://www.apache.org/licenses/LICENSE-2.0
+    ##
+    ## Unless required by applicable law or agreed to in writing, software
+    ## distributed under the License is distributed on an "AS IS" BASIS,
+    ## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    ## See the License for the specific language governing permissions and
+    ## limitations under the License.
+    ## ---------------------------------------------------------------------------
+      
+    artemis = ENC(1024:2B0273D9723A79291C32F9E97522060FF32CB71D819A537304B2BE4A6A3A0210:C6883804C383F65374F2DCA2287009239DB7B12F86814ADE930937B764F1D038A3DB35AA456EBEBB9977813799516926BCD02233F97FC06607EE5997641AE187)

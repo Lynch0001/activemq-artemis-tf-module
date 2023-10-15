@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: artemis
+  namespace: activemq-artemis-broker
+  labels:
+    app: artemis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: artemis
+  template:
+    metadata:
+      labels:
+        app: artemis
+    spec:
+      securityContext:
+        runAsUser: 0
+      initContainers:
+        - name: artemis-init
+          image: apache/activemq-artemis:2.30.0
+          workingDir: /
+          command: [ '/opt/activemq-artemis/bin/artemis', 'create', '--user', 'artemis', '--password', 'password', '--allow-anonymous', 'true', '/etc/activemq-artemis']
+          ports:
+            - containerPort: 61616
+              name: tcp
+            - containerPort: 8161
+              name: admin
+          env:
+            - name: ANONYMOUS_LOGIN
+              value: "true"
+            - name: ACTIVEMQ_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: artemis-config
+                  key: ACTIVEMQ_CONFIG_NAME
+            - name: ACTIVEMQ_CONFIG_DEFAULTACCOUNT
+              valueFrom:
+                configMapKeyRef:
+                  name: artemis-config
+                  key: ACTIVEMQ_CONFIG_DEFAULTACCOUNT
+          volumeMounts:
+            - name: broker
+              mountPath: /etc/activemq-artemis
+            - name: broker-config
+              mountPath: /etc/activemq-artemis/etc/broker.xml
+              subPath: broker.xml
+      containers:
+        - name: artemis
+          image: apache/activemq-artemis:2.30.0
+          workingDir: /
+          command: [ '/etc/activemq-artemis/bin/artemis', 'run']
+          ports:
+            - containerPort: 61616
+              name: tcp
+            - containerPort: 8161
+              name: admin
+          env:
+            - name: ANONYMOUS_LOGIN
+              value: "true"
+            - name: ACTIVEMQ_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: artemis-config
+                  key: ACTIVEMQ_CONFIG_NAME
+            - name: ACTIVEMQ_CONFIG_DEFAULTACCOUNT
+              valueFrom:
+                configMapKeyRef:
+                  name: artemis-config
+                  key: ACTIVEMQ_CONFIG_DEFAULTACCOUNT
+          volumeMounts:
+            - name: broker
+              mountPath: /etc/activemq-artemis
+            - name: broker-config
+              mountPath: /etc/activemq-artemis/etc/broker.xml
+              subPath: broker.xml
+            - name: certs
+              readOnly: true
+              mountPath: /etc/activemq-artemis/certs
+      volumes:
+        - name: broker
+          emptyDir:
+            sizeLimit: 50Mi
+        - name: broker-config
+          configMap:
+            name: broker-config
+            items:
+              - key: broker.xml
+                path: broker.xml
+        - name: certs
+          secret:
+            secretName: artemis-certs
+

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: broker-login
+  namespace: activemq-artemis-broker
+data:
+  login.config: |
+    activemq {
+      org.apache.activemq.artemis.spi.core.security.jaas.PropertiesLoginModule sufficient
+      debug=false
+      reload=true
+      org.apache.activemq.jaas.properties.user="artemis-users.properties"
+      org.apache.activemq.jaas.properties.role="artemis-roles.properties";
+      
+      org.apache.activemq.artemis.spi.core.security.jaas.GuestLoginModule sufficient
+      debug=false
+      org.apache.activemq.jaas.guest.user="artemis"
+      org.apache.activemq.jaas.guest.role="amq";
+    };

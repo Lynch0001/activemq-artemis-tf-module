@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: artemis-service-external
+  namespace: activemq-artemis-broker
+  labels:
+    app: artemis
+spec:
+  selector:
+    app: artemis
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      name: console
+      port: 8161
+      targetPort: admin
+      nodePort: 30061

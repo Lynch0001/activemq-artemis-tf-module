@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: artemis-service
+  namespace: activemq-artemis-broker
+  labels:
+    app: artemis
+spec:
+  selector:
+    app: artemis
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      name: core
+      port: 61616
+      targetPort: tcp
