@@ -43,9 +43,6 @@ spec:
           volumeMounts:
             - name: broker
               mountPath: /etc/activemq-artemis
-            - name: broker-config
-              mountPath: /etc/activemq-artemis/etc/broker.xml
-              subPath: broker.xml
       containers:
         - name: artemis
           image: apache/activemq-artemis:2.30.0
@@ -72,16 +69,7 @@ spec:
           volumeMounts:
             - name: broker
               mountPath: /etc/activemq-artemis
-            - name: broker-config
-              mountPath: /etc/activemq-artemis/etc/broker.xml
-              subPath: broker.xml
       volumes:
         - name: broker
           emptyDir:
             sizeLimit: 50Mi
-        - name: broker-config
-          configMap:
-            name: broker-config
-            items:
-              - key: broker.xml
-                path: broker.xml
