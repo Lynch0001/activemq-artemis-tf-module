@@ -24,9 +24,9 @@ spec:
           command: [ '/opt/activemq-artemis/bin/artemis', 'create', '--user', 'artemis', '--password', 'password', '--allow-anonymous', 'true', '/etc/activemq-artemis']
           ports:
             - containerPort: 61616
-              name: tcp
+              name: core
             - containerPort: 8161
-              name: admin
+              name: console
           env:
             - name: ANONYMOUS_LOGIN
               value: "true"

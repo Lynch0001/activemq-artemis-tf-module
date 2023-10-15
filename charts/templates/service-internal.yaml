@@ -13,4 +13,4 @@ spec:
     - protocol: TCP
       name: core
       port: 61616
-      targetPort: tcp
+      targetPort: 61616

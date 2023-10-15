@@ -8,10 +8,11 @@ metadata:
 spec:
   selector:
     app: artemis
-  type: LoadBalancer
+    app.kubernetes.io/name: artemis
+  type: NodePort
   ports:
     - protocol: TCP
       name: console
       port: 8161
-      targetPort: admin
+      targetPort: 8161
       nodePort: 30061
